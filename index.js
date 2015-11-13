@@ -17,7 +17,7 @@ io.on('connection', function(socket){
 
     socket.on('chat message', function(message){
         var data = [socket.nickname, message];
-        socket.broadcast.emit('chat message', data);
+        io.emit('chat message', data);
     });
 
     socket.on('set nickname', function(nickname){

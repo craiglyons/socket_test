@@ -29,7 +29,7 @@ io.on('connection', function(socket){
             'previous': previous,
             'new': nickname
         }
-        io.emit('nickname change', data);
+        socket.broadcast.emit('nickname change', data);
     });
 
     socket.on('disconnect', function(){

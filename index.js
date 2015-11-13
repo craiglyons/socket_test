@@ -21,7 +21,7 @@ io.on('connection', function(socket){
     });
 
     socket.on('set nickname', function(nickname){
-        previous = socket.nickname;
+        previous = socket.nickname ? socket.nickname : 'Anonymous';
         socket.nickname = nickname;
         users[nickname] = nickname;
         ++numUsers;

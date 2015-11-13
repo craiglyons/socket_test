@@ -6,12 +6,13 @@
         * { margin: 0; padding: 0; box-sizing: border-box;}
         body { font: 13px Helvetica, Arial; }
         h2 { margin: 10px; font-size: 2em; }
-        #form-container { position: fixed; width: 100%; border-bottom: 1px solid #ccc; }
+        #form-container { position: fixed; width: 100%; border-bottom: 1px solid #ccc; background: white; }
+        #form-header { height: 13em; }
         form { background: #fff; padding: 10px; width: 100%; }
         form input { padding: 10px; width: 50%; margin-right: .5%; }
         form button {  background: rgb(130, 224, 255); border: none; padding: 10px; font-weight: bold; }
         #nickname-form { top: 30px; }
-        #messages { list-style-type: none; margin: 10em 0 0; padding: 0; }
+        #messages { list-style-type: none; padding: 0; overflow: scroll; }
         #messages li { padding: 5px 10px; }
         #messages li:nth-child(odd) { background: #eee; }
     </style>
@@ -20,8 +21,8 @@
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 
 <body>
-<h2 id="nickname">Anonymous</h2>
 <div id="form-container">
+    <h2 id="nickname">Anonymous</h2>
     <form id="nickname-form" action="">
         <input id="n" autocomplete="off" />
         <button type="submit">Set Nickname</button>
@@ -31,6 +32,8 @@
         <button type="submit">Send Message</button>
     </form>
 </div>
+<div id="form-header"></div>
+
 
 <ul id="messages"></ul>
 </body>

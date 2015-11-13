@@ -20,7 +20,6 @@
 
 <body>
 <h2 id="nickname">Anonymous</h2>
-<ul id="messages"></ul>
 <form id="nickname-form" action="">
     <input id="n" autocomplete="off" />
     <button type="submit">Set Nickname</button>
@@ -29,6 +28,7 @@
     <input id="m" autocomplete="off" />
     <button type="submit">Send Message</button>
 </form>
+<ul id="messages"></ul>
 </body>
 <script>
     var socket = io();

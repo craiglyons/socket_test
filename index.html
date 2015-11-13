@@ -6,11 +6,12 @@
         * { margin: 0; padding: 0; box-sizing: border-box;}
         body { font: 13px Helvetica, Arial; }
         h2 { margin: 10px; font-size: 2em; }
+        #form-container { position: fixed; width: 100%; border-bottom: 1px solid #ccc; }
         form { background: #fff; padding: 10px; width: 100%; }
-        form input { padding: 10px; width: 30%; margin-right: .5%; }
+        form input { padding: 10px; width: 50%; margin-right: .5%; }
         form button {  background: rgb(130, 224, 255); border: none; padding: 10px; font-weight: bold; }
         #nickname-form { top: 30px; }
-        #messages { list-style-type: none; margin: 0; padding: 0; }
+        #messages { list-style-type: none; margin: 10em 0 0; padding: 0; }
         #messages li { padding: 5px 10px; }
         #messages li:nth-child(odd) { background: #eee; }
     </style>
@@ -20,14 +21,17 @@
 
 <body>
 <h2 id="nickname">Anonymous</h2>
-<form id="nickname-form" action="">
-    <input id="n" autocomplete="off" />
-    <button type="submit">Set Nickname</button>
-</form>
-<form id="message-form" action="">
-    <input id="m" autocomplete="off" />
-    <button type="submit">Send Message</button>
-</form>
+<div id="form-container">
+    <form id="nickname-form" action="">
+        <input id="n" autocomplete="off" />
+        <button type="submit">Set Nickname</button>
+    </form>
+    <form id="message-form" action="">
+        <input id="m" autocomplete="off" />
+        <button type="submit">Send Message</button>
+    </form>
+</div>
+
 <ul id="messages"></ul>
 </body>
 <script>
@@ -39,6 +43,9 @@
     });
     $('#nickname-form').submit(function(event){
         var nickname = $('#n').val();
+        if(!nickname){
+            nickname = "Anonymous";
+        }
         socket.emit('set nickname', nickname);
         $('#n').val('');
         $('#nickname').text(nickname);

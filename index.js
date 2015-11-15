@@ -4,12 +4,18 @@ var io = require('socket.io')(http);
 
 var port = process.env.PORT || 3000;
 
+var last_user_id = 0;
+var users = {
+    'total': 0
+};
+
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
 io.on('connection', function(socket){
-    socket.broadcast.emit('logon message', 'new user connected.');
+    users['total'] = users['total'] + 1;
+    io.emit('connect message', users);
 
     socket.on('chat message', function(message){
         var data = [get_nickname(), message];
@@ -23,11 +29,12 @@ io.on('connection', function(socket){
             'previous': previous,
             'new': nickname
         }
-        io.emit('nickname change', data);
+        socket.broadcast.emit('nickname change', data);
     });
 
     socket.on('disconnect', function(){
-        socket.broadcast.emit('logoff message', 'user disconnected.');
+        users['total'] = users['total'] - 1;
+        io.emit('disconnect', users);
     });
 
     function get_nickname(){

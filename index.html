@@ -5,16 +5,19 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box;}
         body { font: 13px Helvetica, Arial; }
-        h2 { margin: 10px; font-size: 2em; }
+        #text-container { margin: 10px; font-size: 1.6em; }
+        #num-users { font-style: italic; }
         #form-container { position: fixed; width: 100%; border-bottom: 1px solid #ccc; background: white; }
-        #form-header { height: 13em; }
+        #form-header { height: 17.5em; }
         form { background: #fff; padding: 10px; width: 100%; }
         form input { padding: 10px; width: 30%; margin-right: .5%; }
-        form button {  background: rgb(130, 224, 255); border: none; padding: 10px; font-weight: bold; }
+        button {  background: rgb(130, 224, 255); border: none; padding: 10px; font-weight: bold; }
+        #clear-chat { background: #eee; border: 1px solid #ccc; border-bottom: none; }
         #nickname-form { top: 30px; }
         #messages { list-style-type: none; padding: 0; overflow: scroll; }
         #messages li { padding: 5px 10px; }
         #messages li:nth-child(odd) { background: #eee; }
+
     </style>
 </head>
 <script src="/socket.io/socket.io.js"></script>
@@ -22,7 +25,10 @@
 
 <body>
 <div id="form-container">
-    <h2 id="nickname">Anonymous</h2>
+    <div id="text-container">
+        <h2 id="nickname">Anonymous</h2>
+        <div id="num-users">Welcome! Invite other users to chat.</div>
+    </div>
     <form id="nickname-form" action="">
         <input id="n" autocomplete="off" />
         <button type="submit">Set Nickname</button>
@@ -31,6 +37,7 @@
         <input id="m" autocomplete="off" />
         <button type="submit">Send Message</button>
     </form>
+    <button id="clear-chat" class="button">Clear chat</button>
 </div>
 <div id="form-header"></div>
 
@@ -52,6 +59,7 @@
         socket.emit('set nickname', nickname);
         $('#n').val('');
         $('#nickname').text(nickname);
+        $('#messages').append('<li>You are now known as ' + nickname + '.');
         return false;
     });
 
@@ -62,15 +70,33 @@
         $('#messages').append(newNode);
     });
 
-    socket.on('logon message', function(data){
-        var newNode = "<li>" + data + "</li>";
-        $('#messages').append(newNode);
+    socket.on('connect message', function(users){
+        update_user_count(users['total']);
+        $('#messages').append("<li>a new user has joined.</li>");
+    });
+    socket.on('disconnect', function(users){
+        update_user_count(users['total']);
+        $('#messages').append("<li>a user as disconnected.</li>");
     });
 
     socket.on('nickname change', function(data){
         var newNode = "<li><em>" + data['previous'] + ' is now known as ' + data['new'] + '</em></li>';
         $('#messages').append(newNode);
     });
+
+    $('#clear-chat').on('click', function(){
+        $('#messages').html('');
+    });
+
+    function update_user_count(total){
+        var message = "";
+        if(total > 1) {
+            message = total + " users online.";
+        } else {
+            message = "No other users online.";
+        }
+        $('#num-users').html(message);
+    }
 
 </script>
 </html>

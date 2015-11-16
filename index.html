@@ -44,7 +44,10 @@
 <div id="form-container">
     <div id="text-container">
         <h2 id="nickname">Anonymous</h2>
-        <div id="num-users">Welcome! Invite other users to chat.</div>
+        <div id="users">Welcome! Invite other users to chat.</div>
+        <ul id="user-list">
+            <li>Anonymous</li>
+        </ul>
     </div>
     <form id="nickname-form" action="">
         <input id="n" autocomplete="off" />
@@ -63,17 +66,24 @@
 </body>
 <script>
     var socket = io();
+    var guid;
+
     $('#message-form').submit(function(event){
         socket.emit('chat message', $('#m').val());
         $('#m').val('');
         return false;
     });
+
     $('#nickname-form').submit(function(event){
         var nickname = $('#n').val();
         if(!nickname){
             nickname = "Anonymous";
         }
-        socket.emit('set nickname', nickname);
+        var data = {
+            'nickname': nickname,
+            'guid': guid
+        }
+        socket.emit('set nickname', data);
         $('#n').val('');
         $('#nickname').text(nickname);
         $('#messages').append('<li>You are now known as ' + nickname + '.');
@@ -87,33 +97,33 @@
         $('#messages').append(newNode);
     });
 
-    socket.on('connect message', function(users){
-        update_user_count(users['total']);
+    socket.on('connect message', function(data){
         $('#messages').append("<li>a new user has joined.</li>");
+        data['users'].forEach(function(key, val){
+            var node = "<li>" + val + "</li>";
+            $('#user-list').append(node);
+        });
     });
+
     socket.on('disconnect', function(users){
-        update_user_count(users['total']);
         $('#messages').append("<li>a user as disconnected.</li>");
     });
 
     socket.on('nickname change', function(data){
-        var newNode = "<li><em>" + data['previous'] + ' is now known as ' + data['new'] + '</em></li>';
-        $('#messages').append(newNode);
+        var message = "<li><em>" + data['delta']['previous'] + ' is now known as ' + data['delta']['new'] + '</em></li>';
+        $('#messages').append(message);
+        $('#user-list').html('');
+        debugger;
+        data['users'].forEach(function(key, val){
+            var node = "<li>" + val + "</li>";
+            $('#user-list').append(node);
+        });
+
     });
 
     $('#clear-chat').on('click', function(){
         $('#messages').html('');
     });
-
-    function update_user_count(total){
-        var message = "";
-        if(total > 1) {
-            message = total + " users online.";
-        } else {
-            message = "No other users online.";
-        }
-        $('#num-users').html(message);
-    }
 
 </script>
 </html>
